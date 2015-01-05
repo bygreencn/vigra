@@ -38,7 +38,14 @@ ENDIF(VIGRA_STATIC_LIB)
 
 IF (MSVC)
     ADD_DEFINITIONS(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE)
-ENDIF ()
+    foreach(flag_var
+        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+		if(${flag_var} MATCHES "/MD")
+			string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+		endif(${flag_var} MATCHES "/MD")
+	endforeach(flag_var)
+ENDIF()
 
 IF("${CMAKE_CXX_COMPILER_ID}" MATCHES "(GNU|Clang)")
     set(SUFFICIENT_TEMPLATE_DEPTH FALSE)
@@ -88,10 +95,10 @@ ENDIF()
 ##################################################
 
 INCLUDE(VigraFindPackage)
-VIGRA_FIND_PACKAGE(ZLIB)
-VIGRA_FIND_PACKAGE(TIFF NAMES libtiff_i libtiff) # prefer DLL on Windows
-VIGRA_FIND_PACKAGE(JPEG NAMES libjpeg)
-VIGRA_FIND_PACKAGE(PNG)
+VIGRA_FIND_PACKAGE(ZLIB NAMES libz zlib wxzlib)
+VIGRA_FIND_PACKAGE(TIFF NAMES libtiff_i libtiff wxtiff) # prefer DLL on Windows
+VIGRA_FIND_PACKAGE(JPEG NAMES libjpeg wxjpeg)
+VIGRA_FIND_PACKAGE(PNG NAMES libpng wxpng)
 VIGRA_FIND_PACKAGE(FFTW3 NAMES libfftw3-3 libfftw-3.3)
 VIGRA_FIND_PACKAGE(FFTW3F NAMES libfftw3f-3 libfftwf-3.3)
 
@@ -454,3 +461,5 @@ IF(NOT TIFF_FOUND OR NOT JPEG_FOUND OR NOT PNG_FOUND OR NOT FFTW3_FOUND OR
 ENDIF()
 
 MESSAGE( STATUS "---------------------------------------------------------" )
+
+

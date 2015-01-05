@@ -260,15 +260,15 @@ read_icc_profile (j_decompress_ptr cinfo,
     return FALSE;       /* found only empty markers? */
 
   /* Allocate space for assembled data */
-  icc_data = (JOCTET *) malloc(total_length * sizeof(JOCTET));
+  icc_data = (char *) malloc(total_length * sizeof(char));
   if (icc_data == NULL)
     return FALSE;       /* oops, out of memory */
 
   /* and fill it in */
   for (marker = cinfo->marker_list; marker != NULL; marker = marker->next) {
     if (marker_is_icc(marker)) {
-      JOCTET FAR *src_ptr;
-      JOCTET *dst_ptr;
+      char *src_ptr;
+      char *dst_ptr;
       unsigned int length;
       seq_no = GETJOCTET(marker->data[12]);
       dst_ptr = icc_data + data_offset[seq_no];
